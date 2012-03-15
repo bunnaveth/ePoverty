@@ -1,7 +1,7 @@
 /**************************
  * Project: ePoverty
- * Filename: EPoverty.java
- * Description: //TODO Add Description
+ * Filename: Launcher.java
+ * Description: Launches the application
  * Name: Bunna Veth
  * Date: Mar 10, 2012
  **************************/
@@ -10,18 +10,16 @@ package epoverty;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 
-public class EPoverty
+public class Launcher
 {
     public static void main(String[] args)
     {
         MainWindow window = new MainWindow();
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setSize(800, 500);
+        window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        window.setSize(800, 600);
         window.setMinimumSize(new Dimension(400, 300));
-        window.setLocationRelativeTo(null);
+        window.setLocationRelativeTo(null); //centers window on screen
         window.setVisible(true);
-
-        window.connectToDatabase();
     }
 }//end class
 

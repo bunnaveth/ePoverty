@@ -120,16 +120,17 @@ public class MainWindow extends JFrame
         add(statusBar, BorderLayout.SOUTH);
 
         //content
-        contentArea = Box.createVerticalBox();
-        contentArea.setOpaque(true);
-        contentArea.setBackground(Color.WHITE);
-        pageLabel = new JLabel("Home Page");
-        table = new JTable();
+        ContentPanel content = new ContentPanel();
+        //contentArea = Box.createVerticalBox();
+        //contentArea.setOpaque(true);
+        //contentArea.setBackground(Color.WHITE);
+        //pageLabel = new JLabel("Home Page");
+        //table = new JTable();
 
-        contentArea.add(pageLabel);
-        contentArea.add(table);
+        //contentArea.add(pageLabel);
+        //contentArea.add(content);
 
-        add(contentArea);
+        add(content);
 
     }
 
@@ -137,6 +138,7 @@ public class MainWindow extends JFrame
 
     private class SideBarHandler implements ActionListener
     {
+        @Override
         public void actionPerformed(ActionEvent event)
         {
             if (selectedButton != null)
@@ -151,29 +153,6 @@ public class MainWindow extends JFrame
     private SqlDatabase database;
     private boolean isConnected = false;
 
-    public void connectToDatabase()
-    {
-        database = new SqlDatabase();
-        isConnected = database.connect("epoverty", "Cis2770#");
-        System.out.println(isConnected);
-        if (isConnected)
-            statusBar.setText("Logged in as epoverty.");
-        else
-            statusBar.setText("Login Failed.");
-        queryDatabase("");
-    }
-
-    public void queryDatabase(String query)
-    {
-        String[] columnHeaders = {"1","1","1","1","1","1","1","1","1","1"};
-        String[][] data = database.query("SELECT * FROM persons", 10);
-        //for(ArrayList<String> row:data)
-        table = new JTable(data,columnHeaders);
-        table.setGridColor(BORDER_COLOR);
-        add(table,BorderLayout.CENTER);
-        setVisible(true);
-        //statusBar.setText(data);
-    }
 
 }//end class
 
