@@ -1,19 +1,31 @@
 /**************************
- * Project: ePov
+ * Project: ePoverty
  * Filename: MainWindow.java
  * Description: //TODO Add Description
  * Name: Bunna Veth
  * Date: Mar 9, 2012
  **************************/
+
+// FUTURE CHANGES (feel free to add any ideas)
+// =====================================================
+// Perhaps move the details of a certain panel to another class.
+// Make the status bar more useful by providing table metrics.
+// Re-evaluate subcomponents of navbar and sidebar.
+// Create a navBarButton class.
+//
+// CHANGELOG (include the most recent change at the top)
+// =====================================================
+// GENERAL REFACTORING (Bunna, 3/16/2012)
+// Changed toolBar to navBar to distinguish from the toolbar in the content panel (add/edit bar).
+// Comments to clarify the structure of the entities.
+
 package epoverty;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.Icon;
@@ -21,46 +33,43 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
 public class MainWindow extends JFrame
 {
-    private Box toolBar;
-    private JButton backButton;
-    private JButton forwardButton;
-    private JTextField searchField;
-
-    private Box sideBar;
-    private SideBarButton fundraisersButton;
-    private SideBarButton donorsButton;
-    private SideBarButton donationsButton;
-    private SideBarButton accountsButton;
-    private SideBarButton expeditionsButton;
-
-    public JLabel statusBar;
-
-    private Box contentArea;
-    private JLabel pageLabel;
-    private JTable table;
-
+    //Style
     public static Color LIGHT_GRAY = new Color(240, 240, 240);
     public static Color DARK_GRAY = new Color(220, 220, 220);
     public static Color GRAY_TEXT = new Color(100, 100, 100);
     public static Color BORDER_COLOR = new Color(200, 200, 200);
     public static Font ARIAL = new Font("Arial", Font.PLAIN, 14);
 
+    //Fields
+    private Box navBar;
+    private JButton backButton;
+    private JButton forwardButton;
+    private JTextField searchField;
+    private Box sideBar;
+    private SideBarButton fundraisersButton;
+    private SideBarButton donorsButton;
+    private SideBarButton donationsButton;
+    private SideBarButton accountsButton;
+    private SideBarButton expeditionsButton;
+    public JLabel statusBar;
+    ContentPanel content;
+
+    //Constructor
     public MainWindow()
     {
-        super("ePov"); //title
-        setLayout(new BorderLayout(1, 1));
-        setBackground(BORDER_COLOR);
+        super("ePoverty"); //title
+        setLayout(new BorderLayout(1, 1)); //cells are spaced 1px horizontally and 1px vertically
+        setBackground(BORDER_COLOR); //I call it border color, because the cellspacing creates a border look
 
-        //toolbar
-        toolBar = Box.createHorizontalBox();
-        toolBar.setOpaque(true);
-        toolBar.setBackground(DARK_GRAY);
+        //Navigation Bar
+        navBar = Box.createHorizontalBox();
+        navBar.setOpaque(true);
+        navBar.setBackground(DARK_GRAY);
 
         backButton = new JButton("Back");
         Icon backButtonIcon = new ImageIcon(getClass().getResource("resources/LeftArrow.png"));
@@ -76,14 +85,14 @@ public class MainWindow extends JFrame
         searchField.setMinimumSize(searchField.getPreferredSize());
         searchField.setMaximumSize(searchField.getPreferredSize());
 
-        toolBar.add(backButton);
-        toolBar.add(forwardButton);
-        toolBar.add(Box.createHorizontalGlue());
-        toolBar.add(searchField);
+        navBar.add(backButton);
+        navBar.add(forwardButton);
+        navBar.add(Box.createHorizontalGlue());
+        navBar.add(searchField);
 
-        add(toolBar, BorderLayout.NORTH);
+        add(navBar, BorderLayout.NORTH);
 
-        //sidebar
+        //Side Bar
         sideBar = Box.createVerticalBox();
         sideBar.setOpaque(true);
         sideBar.setBackground(LIGHT_GRAY);
@@ -110,8 +119,8 @@ public class MainWindow extends JFrame
 
         add(sideBar, BorderLayout.WEST);
 
-        //statusbar
-        statusBar = new JLabel("Welcome to Eliminating Poverty.");
+        //Status Bar
+        statusBar = new JLabel("Welcome to ePoverty.");
         statusBar.setHorizontalAlignment(JLabel.CENTER);
         statusBar.setOpaque(true);
         statusBar.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
@@ -119,21 +128,13 @@ public class MainWindow extends JFrame
         statusBar.setForeground(GRAY_TEXT);
         add(statusBar, BorderLayout.SOUTH);
 
-        //content
-        ContentPanel content = new ContentPanel();
-        //contentArea = Box.createVerticalBox();
-        //contentArea.setOpaque(true);
-        //contentArea.setBackground(Color.WHITE);
-        //pageLabel = new JLabel("Home Page");
-        //table = new JTable();
-
-        //contentArea.add(pageLabel);
-        //contentArea.add(content);
-
+        //Content Panel
+        content = new ContentPanel();
         add(content);
 
     }
 
+    //Sidebar Handler
     private SideBarButton selectedButton;
 
     private class SideBarHandler implements ActionListener
@@ -141,18 +142,16 @@ public class MainWindow extends JFrame
         @Override
         public void actionPerformed(ActionEvent event)
         {
+            //deselects previous button
             if (selectedButton != null)
                 selectedButton.deselect();
 
+            //selects button user clicked and makes changes to the content panel
             selectedButton = (SideBarButton) event.getSource();
             selectedButton.select();
+            content.performQuery(selectedButton.getQuery());
         }
 
     }
 
-    private SqlDatabase database;
-    private boolean isConnected = false;
-
-
 }//end class
-

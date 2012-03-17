@@ -1,10 +1,17 @@
 /**************************
- * Project: SqlPlayground
+ * Project: ePoverty
  * Filename: FancyTable.java
  * Description: JTable with alternating row colors
  * Name: Bunna Veth
- * Date: Mar 12, 2012
+ * Date: Mar 15, 2012
  **************************/
+
+// FUTURE CHANGES (feel free to add any ideas)
+// =====================================================
+// Change text color of date values for expedition (i.e. change color to red if expedition cutoff date has passed)
+// Make changes to column order and width persistent.
+// Perhaps move the sorter and filter inside this class (as opposed to separate entities in ContentPanel)
+
 package epoverty;
 
 import java.awt.Color;

@@ -1,10 +1,15 @@
 /**************************
- * Project: SqlPlayground
+ * Project: ePoverty
  * Filename: ResultSetTableModel.java
- * Description: //TODO Add Description
+ * Description: Binds a ResultSet object to a TableModel
  * Name: Bunna Veth
- * Date: Mar 10, 2012
+ * Date: Mar 15, 2012
  **************************/
+
+//NOTICE!!! (Bunna, 3/16/2012)
+//THIS CLASS HAS BEEN MADE OBSOLETE AND WILL BE REPLACED BY ResultSetTableModelNew
+//DO NOT MAKE ANY FURTHER CHANGES TO THIS FILE, AS IT WILL BE DELETED IN THE NEXT COMMIT.
+
 package epoverty;
 
 import java.sql.Connection;
@@ -13,10 +18,17 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.HashMap;
 import javax.swing.table.AbstractTableModel;
 
 public class ResultSetTableModel extends AbstractTableModel
 {
+    private String driver = "com.mysql.jdbc.Driver";
+    private String url = "jdbc:mysql://50.63.244.60:3306/epoverty";
+    private String username;
+    private String password;
+    private String query;
+
     private Connection connection;
     private Statement statement;
     private ResultSet resultSet;
@@ -24,14 +36,18 @@ public class ResultSetTableModel extends AbstractTableModel
     private int numberOfRows;
     private boolean connectedToDatabase = false;
 
-    public ResultSetTableModel(String driver, String url, String username, String password, String query)
+    public ResultSetTableModel(String user, String pass, String command)
             throws SQLException, ClassNotFoundException
     {
+        username = user;
+        password = pass;
+
         Class.forName(driver);
         connection = DriverManager.getConnection(url, username, password);
         statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         connectedToDatabase = true;
-        setQuery(query);
+
+        setQuery(command);
     }
 
     //Column Class
@@ -71,6 +87,21 @@ public class ResultSetTableModel extends AbstractTableModel
         return 0;
     }
 
+    //Maps database names to a more readable format
+    HashMap<String, String> headers = new HashMap<String, String>()
+    {
+
+        {
+            put("firstName", "First Name");
+            put("lastName", "Last Name");
+            put("emailAddress", "Email");
+            put("phoneNumber", "Phone");
+            put("raiseGoal", "Expedition Goal");
+            put("raised", "Total Raised");
+        }
+
+    };
+
     //Column Name
     @Override
     public String getColumnName(int column) throws IllegalStateException
@@ -79,7 +110,11 @@ public class ResultSetTableModel extends AbstractTableModel
             throw new IllegalStateException("Not Connected to Database");
         try
         {
-            return metaData.getColumnName(column + 1);
+            String columnName = metaData.getColumnName(column + 1);
+            if (headers.containsKey(columnName))
+                return headers.get(columnName);
+            else
+                return columnName;
         }
         catch (SQLException e)
         {
@@ -119,8 +154,10 @@ public class ResultSetTableModel extends AbstractTableModel
     }
 
     //Set Query
-    public void setQuery(String query) throws SQLException, IllegalStateException
+    public void setQuery(String command) throws SQLException, IllegalStateException
     {
+        query = command;
+
         if (!connectedToDatabase)
             throw new IllegalStateException("Not Connected to Database");
 
@@ -132,6 +169,12 @@ public class ResultSetTableModel extends AbstractTableModel
         numberOfRows = resultSet.getRow();
 
         fireTableStructureChanged(); //notify table that model has changed
+    }
+
+    public void reconnect() throws SQLException
+    {
+        connection = DriverManager.getConnection(url, username, password);
+        statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
     }
 
     //Disconnect
@@ -155,6 +198,7 @@ public class ResultSetTableModel extends AbstractTableModel
             }
         }
     }
+
 
 }//end class
 
