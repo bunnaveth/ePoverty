@@ -1,7 +1,7 @@
 /**************************
  * Project: ePoverty
  * Filename: MainWindow.java
- * Description: //TODO Add Description
+ * Description: Mother frame that houses all the components and handles the views.
  * Name: Bunna Veth
  * Date: Mar 9, 2012
  **************************/
@@ -15,6 +15,11 @@
 //
 // CHANGELOG (include the most recent change at the top)
 // =====================================================
+// MINOR CHANGES TO SideBarHandler (Bunna, 3/19/2012)
+// Now clears the filter text when buttons are pressed.
+// This allows for the entire table to be displayed.
+// Rather than have a previous, irrelevant filter narrow the results.
+//
 // GENERAL REFACTORING (Bunna, 3/16/2012)
 // Changed toolBar to navBar to distinguish from the toolbar in the content panel (add/edit bar).
 // Comments to clarify the structure of the entities.
@@ -33,7 +38,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 
 public class MainWindow extends JFrame
@@ -149,7 +153,8 @@ public class MainWindow extends JFrame
             //selects button user clicked and makes changes to the content panel
             selectedButton = (SideBarButton) event.getSource();
             selectedButton.select();
-            content.performQuery(selectedButton.getQuery());
+            content.performQuery(selectedButton.getQuery(),selectedButton.getLabel());
+            content.clearFilter();
         }
 
     }

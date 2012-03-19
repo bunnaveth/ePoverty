@@ -40,7 +40,7 @@ public class Launcher
         MainWindow window = new MainWindow();
         window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); //Dispose database connections
         window.setSize(800, 600);
-        window.setMinimumSize(new Dimension(400, 300));
+        window.setMinimumSize(new Dimension(600, 400));
         window.setLocationRelativeTo(null); //centers window on screen
         window.setVisible(true);
     }

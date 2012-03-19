@@ -5,9 +5,9 @@
  * Name: Bunna Veth
  * Date: Mar 15, 2012
  **************************/
-
 // FUTURE CHANGES (feel free to add any ideas)
 // =====================================================
+// Perhaps use a CachedRowSet to possibly speed things up.
 // Handle exceptions more gracefully.
 // Set up a connection pool rather than re-establishing the same connection.
 // Make ResultSet -> Object[][] transformation more efficient.
@@ -15,7 +15,13 @@
 // CHANGELOG (include the most recent change at the top)
 // =====================================================
 // (See OVERHAUL change in ResultSetTableModelNew.java)
-
+//
+// ROW NUMBERS (Bunna, 3/18/12)
+// Added row numbers to the data to bind the general view
+// to the detailed view. This allows the detailed view
+// to reference the correct row when filtering the data.
+// This also had the side effect of shifting the ResultSet
+// by -1. Making it a net 0 shift.
 package epoverty;
 
 import java.sql.Connection;
@@ -60,13 +66,13 @@ public class SqlConnection
         //establish connection
         try
         {
-            Class.forName(DRIVER); //loads the driver class
+            Class.forName(DRIVER); //loads the driver class (may be unnecessary, I read somewhere the JVM does this automatically)
             connection = DriverManager.getConnection(URL, username, password);
             statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         }
         catch (Exception e)
         {
-            System.out.println("Problem trying to connect. Exiting application.");
+            System.err.println("Problem trying to connect.");
             closeConnections();
         }
     }
@@ -85,26 +91,29 @@ public class SqlConnection
             if (!connection.isValid(CONNECTION_TEST_LENGTH))
             {
                 System.out.println("Attempting to re-establish connection.");
+                closeConnections();
                 connect();
             }
 
             //perform query
             resultSet = statement.executeQuery(query);
-            metaData = resultSet.getMetaData();
+            metaData = resultSet.getMetaData(); //metadata contains header information
 
             //get table dimensions (inefficient but gets the job done)
-            numberOfColumns = metaData.getColumnCount();
-            resultSet.last(); //go to the end to retrieve row number
+            numberOfColumns = metaData.getColumnCount() + 1;
+            resultSet.last(); //go to the end to retrieve row number (in order to initialize array)
             numberOfRows = resultSet.getRow();
             Object[][] tableData = new Object[numberOfRows][numberOfColumns];
             headerNames = new String[numberOfColumns];
             headerClasses = new String[numberOfColumns];
 
             //header data
-            for (int i = 0; i < numberOfColumns; i++)
+            headerNames[0] = ""; //leave blank
+            headerClasses[0] = "java.lang.Integer";
+            for (int i = 1; i < numberOfColumns; i++)
             {
-                headerNames[i] = metaData.getColumnName(i + 1);
-                headerClasses[i] = metaData.getColumnClassName(i + 1);
+                headerNames[i] = metaData.getColumnName(i);
+                headerClasses[i] = metaData.getColumnClassName(i);
             }
 
             //populate table from result set
@@ -112,8 +121,9 @@ public class SqlConnection
             resultSet.beforeFirst(); //move cursor back to the start
             while (resultSet.next())
             {
-                for (int i = 0; i < numberOfColumns; i++)
-                    tableData[row][i] = resultSet.getObject(i + 1);
+                tableData[row][0] = row + 1; //add row number (start counting from 1)
+                for (int i = 1; i < numberOfColumns; i++)
+                    tableData[row][i] = resultSet.getObject(i);
                 row++;
             }
 
@@ -141,11 +151,8 @@ public class SqlConnection
         }
         catch (SQLException e)
         {
-            System.out.println("Unable to terminate connection.");
+            System.err.println("Unable to terminate connection.");
         }
-
-        //Exit application for now
-        System.exit(1);
     }
 
     //Retrieve header names

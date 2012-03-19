@@ -6,6 +6,16 @@
  * Date: Mar 15, 2012
  **************************/
 
+// FUTURE CHANGES (feel free to add any ideas)
+// =====================================================
+// Add "transition state" when the button goes from unselected to selected (loading icon).
+//
+// CHANGELOG (include the most recent change at the top)
+// =====================================================
+// GETLABEL (Bunna, 3/18/12)
+// Overrided getLabel() method because it was returning the
+// extra spaces.
+
 package epoverty;
 
 import java.awt.Color;
@@ -19,14 +29,16 @@ public class SideBarButton extends JButton
     private Font arial = new Font("Arial", Font.PLAIN, 15);
     private Font arialBold = new Font("Arial", Font.BOLD, 15);
     private String query;
+    private String label;
 
     //Constructor
-    public SideBarButton(String table)
+    public SideBarButton(String text)
     {
-        super(table + "  "); //extra space is for padding
+        super(text + "  "); //extra space is for padding
+        label = text;
 
         //construct query
-        query = "SELECT * from " + table.toLowerCase() + "_view";
+        query = "SELECT * from " + text.toLowerCase() + "_view";
 
         //restrict dimensions
         Dimension size = new Dimension(200, 30);
@@ -48,6 +60,13 @@ public class SideBarButton extends JButton
     public String getQuery()
     {
         return query;
+    }
+
+    //Get Label (needed because the actual text appends 2 spaces, just want the characters)
+    @Override
+    public String getLabel()
+    {
+        return label;
     }
 
     //Selected Style

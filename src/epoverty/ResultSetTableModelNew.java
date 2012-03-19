@@ -13,6 +13,12 @@
 //
 // CHANGELOG (include the most recent change at the top)
 // =====================================================
+// BUG FIX - ARRAY OUT OF BOUNDS (Bunna, 3/19/2012)
+// Added an exception catch all to getColumnClass().
+// This effectively returns an Object class if there is
+// an error accessing the header array. Probably not the
+// best solution, but it beats having it stall unexpectedly.
+//
 // OVERHAUL (Bunna, 3/16/2012)
 // This version separates the Sql Connection from the actual table model.
 // Instead of binding the table data to a ResultSet, the sequel connection
@@ -73,6 +79,12 @@ public class ResultSetTableModelNew extends AbstractTableModel
         fireTableStructureChanged();
     }
 
+    //Get Row Data (used to retrieve data for the details view)
+    public Object[] getRowData(int i)
+    {
+        return tableData[i];
+    }
+
     //Row Count
     @Override
     public int getRowCount()
@@ -106,6 +118,10 @@ public class ResultSetTableModelNew extends AbstractTableModel
         catch (ClassNotFoundException e)
         {
             System.out.println("Class Not Found. Unable to load " + headerClasses[i]);
+        }
+        catch (Exception e) //catch-all to stop array access error
+        {
+            e.printStackTrace(System.err);
         }
 
         //if class not found, just represent the column as a generic object
