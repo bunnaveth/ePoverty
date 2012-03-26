@@ -1,6 +1,5 @@
 nbproject/*
 build/*
-src/*
 dist/*
 manifest.mf
 build.xml
