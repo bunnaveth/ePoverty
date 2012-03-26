@@ -72,6 +72,7 @@ public class ContentPanel extends JPanel
         try
         {
             //Toolbar
+            /*
             Box toolBar = Box.createHorizontalBox();
             toolBar.setOpaque(true);
             toolBar.setBackground(Color.WHITE);
@@ -90,8 +91,8 @@ public class ContentPanel extends JPanel
             toolBar.add(editButton);
             toolBar.add(filterTextField);
 
-            add(toolBar, BorderLayout.NORTH);
-
+            add(toolBar, BorderLayout.CENTER);
+            */
             //Table
             tableModel = new ResultSetTableModelNew(USERNAME, PASSWORD, DEFAULT_QUERY);
             resultTable = new FancyTable(tableModel);
@@ -102,6 +103,8 @@ public class ContentPanel extends JPanel
 
             JScrollPane tablePane = new JScrollPane(resultTable);
             tablePane.setBorder(BorderFactory.createEmptyBorder());
+            
+            
             add(tablePane, BorderLayout.CENTER);
 
             //Person Panel
