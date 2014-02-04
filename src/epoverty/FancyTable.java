@@ -41,12 +41,12 @@ public class FancyTable extends JTable
     //Fonts and Colors
     private final Font REGULAR_FONT = new Font("Arial", Font.PLAIN, 12);
     private final Font SELECTED_FONT = new Font("Arial", Font.BOLD, 12);
-    private final Color TEXT_COLOR = Color.WHITE;
+    private final Color TEXT_COLOR = new Color(22, 23, 23);
     private final Color GRID_COLOR = Color.WHITE;
-    private final Color EVEN_ROW_COLOR = Color.RED;
-    private final Color ODD_ROW_COLOR = new Color(255, 100, 100);
-    private final Color SELECTED_COLOR = Color.RED;
-    private final Color SELECTED_BACKGROUND = Color.WHITE;
+    private final Color EVEN_ROW_COLOR = new Color(255, 255, 255);
+    private final Color ODD_ROW_COLOR = new Color(243, 246, 250);
+    private final Color SELECTED_COLOR = Color.white;
+    private final Color SELECTED_BACKGROUND = new Color(84, 151, 213);
 
     //Focusable Behavior
     //true = allows scrolling through entries using the keyboard arrow keys

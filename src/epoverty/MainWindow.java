@@ -31,22 +31,17 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 public class MainWindow extends JFrame
 {
     //Style
-    public static Color LIGHT_GRAY = new Color(240, 240, 240);
-    public static Color DARK_GRAY = new Color(220, 220, 220);
+    public static Color LIGHT_GRAY = new Color(233, 236, 241);
+    public static Color DARK_GRAY = new Color(180, 180, 180);
     public static Color GRAY_TEXT = new Color(100, 100, 100);
     public static Color BORDER_COLOR = new Color(200, 200, 200);
+    public static Color BORDER_COLOR_2 = new Color(187, 187, 187);
+    public static Color BORDER_COLOR_TOOLBAR = new Color(100, 100, 100);
     public static Font ARIAL = new Font("Arial", Font.PLAIN, 14);
 
     //Fields
@@ -60,6 +55,8 @@ public class MainWindow extends JFrame
     private SideBarButton donationsButton;
     private SideBarButton accountsButton;
     private SideBarButton expeditionsButton;
+    private JPanel        mainContentPanel;
+    private LoginPanel    loginPanel;
     public JLabel statusBar;
     ContentPanel content;
 
@@ -70,21 +67,27 @@ public class MainWindow extends JFrame
         setLayout(new BorderLayout(1, 1)); //cells are spaced 1px horizontally and 1px vertically
         setBackground(BORDER_COLOR); //I call it border color, because the cellspacing creates a border look
 
+        // Panel
+        mainContentPanel    = new JPanel(new BorderLayout());
+        loginPanel          = new LoginPanel(this);
+        
         //Navigation Bar
         navBar = Box.createHorizontalBox();
         navBar.setOpaque(true);
         navBar.setBackground(DARK_GRAY);
-
-        backButton = new JButton("Back");
-        Icon backButtonIcon = new ImageIcon(getClass().getResource("resources/LeftArrow.png"));
-        backButton.setIcon(backButtonIcon);
+        navBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, BORDER_COLOR_TOOLBAR));
+        
+        backButton = new JButton("Add");
+        //Icon backButtonIcon = new ImageIcon(getClass().getResource("resources/LeftArrow.png"));
+        //backButton.setIcon(backButtonIcon);
         backButton.setFont(ARIAL);
 
-        forwardButton = new JButton("Forward");
-        Icon forwardButtonIcon = new ImageIcon(getClass().getResource("resources/RightArrow.png"));
-        forwardButton.setIcon(forwardButtonIcon);
+        forwardButton = new JButton("Edit");
+        //Icon forwardButtonIcon = new ImageIcon(getClass().getResource("resources/RightArrow.png"));
+        //forwardButton.setIcon(forwardButtonIcon);
         forwardButton.setFont(ARIAL);
-
+        
+        
         searchField = new JTextField("Search", 12);
         searchField.setMinimumSize(searchField.getPreferredSize());
         searchField.setMaximumSize(searchField.getPreferredSize());
@@ -94,20 +97,22 @@ public class MainWindow extends JFrame
         navBar.add(Box.createHorizontalGlue());
         navBar.add(searchField);
 
-        add(navBar, BorderLayout.NORTH);
-
         //Side Bar
+        mainContentPanel.add(navBar, BorderLayout.NORTH);
         sideBar = Box.createVerticalBox();
         sideBar.setOpaque(true);
         sideBar.setBackground(LIGHT_GRAY);
+        sideBar.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, BORDER_COLOR_2));
 
         fundraisersButton = new SideBarButton("Fundraisers");
+        fundraisersButton.select();
+        selectedButton = fundraisersButton;
         donorsButton = new SideBarButton("Donors");
         donationsButton = new SideBarButton("Donations");
         accountsButton = new SideBarButton("Accounts");
         expeditionsButton = new SideBarButton("Expeditions");
 
-        SideBarHandler handler = new SideBarHandler();
+        MainWindow.SideBarHandler handler = new MainWindow.SideBarHandler();
         fundraisersButton.addActionListener(handler);
         donorsButton.addActionListener(handler);
         donationsButton.addActionListener(handler);
@@ -121,21 +126,33 @@ public class MainWindow extends JFrame
         sideBar.add(accountsButton);
         sideBar.add(expeditionsButton);
 
-        add(sideBar, BorderLayout.WEST);
+        mainContentPanel.add(sideBar, BorderLayout.WEST);
 
         //Status Bar
         statusBar = new JLabel("Welcome to ePoverty.");
+        
         statusBar.setHorizontalAlignment(JLabel.CENTER);
         statusBar.setOpaque(true);
-        statusBar.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
+        statusBar.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, BORDER_COLOR_TOOLBAR));
         statusBar.setBackground(DARK_GRAY);
         statusBar.setForeground(GRAY_TEXT);
-        add(statusBar, BorderLayout.SOUTH);
+        
+        mainContentPanel.add(statusBar, BorderLayout.SOUTH);
+        
 
         //Content Panel
         content = new ContentPanel();
-        add(content);
+        mainContentPanel.add(content);
+        
+        add(loginPanel);
 
+    }
+    
+    public void changeLoginForMainPanel()
+    {
+        remove(loginPanel);
+        add(mainContentPanel);
+        validate();
     }
 
     //Sidebar Handler
